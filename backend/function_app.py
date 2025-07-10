@@ -1,25 +1,40 @@
 import azure.functions as func
-import logging
+import os
+import json
+from azure.cosmos import CosmosClient, exceptions
 
-app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    try:
+        # Read env vars
+        url = os.environ["COSMOS_DB_URL"]
+        key = os.environ["COSMOS_DB_KEY"]
+        db_name = os.environ["COSMOS_DB_NAME"]
+        container_name = os.environ["COSMOS_DB_CONTAINER"]
 
-@app.route(route="ResumeViewCounter")
-def ResumeViewCounter(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
+        # Connect to Cosmos DB
+        client = CosmosClient(url, credential=key)
+        container = client.get_database_client(db_name).get_container_client(container_name)
 
-    name = req.params.get('name')
-    if not name:
-        try:
-            req_body = req.get_json()
-        except ValueError:
-            pass
-        else:
-            name = req_body.get('name')
+        # Fetch the view count
+        item = container.read_item(item="home", partition_key="home")
+        item["views"] += 1
 
-    if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
-    else:
+        # Update it
+        container.upsert_item(item)
+
         return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
+            json.dumps({"views": item["views"]}),
+            mimetype="application/json",
+            status_code=200
+        )
+
+    except exceptions.CosmosHttpResponseError as e:
+        return func.HttpResponse(
+            f"Cosmos DB error: {str(e)}",
+            status_code=500
+        )
+    except Exception as e:
+        return func.HttpResponse(
+            f"Unexpected error: {str(e)}",
+            status_code=500
         )
