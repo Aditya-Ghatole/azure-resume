@@ -367,7 +367,7 @@ window.addEventListener('DOMContentLoaded', (event) =>{
     getVisitCount();
 })
 
-const functionApi = 'counter-api-atbphqayabhdhhew.centralindia-01.azurewebsites.net';
+const functionApi = 'https://counter-api-atbphqayabhdhhew.centralindia-01.azurewebsites.net/api/TrackViews?';
 
 const getVisitCount = () => {
     let count = 1;
