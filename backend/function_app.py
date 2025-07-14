@@ -2,6 +2,7 @@ import azure.functions as func
 import os
 import json
 from azure.cosmos import CosmosClient
+from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -15,6 +16,14 @@ def track_views(req: func.HttpRequest) -> func.HttpResponse:
 
         client = CosmosClient(url, credential=key)
         container = client.get_database_client(db_name).get_container_client(container_name)
+
+        try:
+            item = container.read_item(item="home", partition_key="home")
+            item["views"] += 1
+            container.upsert_item(item)
+        except CosmosResourceNotFoundError:
+            item = {"id": "home", "views": 1}
+            container.create_item(item)
 
         # Read item and increment views
         item = container.read_item(item="home", partition_key="home")
