@@ -367,18 +367,20 @@ window.addEventListener('DOMContentLoaded', (event) =>{
     getVisitCount();
 })
 
-const functionApi = 'https://counter-api-atbphqayabhdhhew.centralindia-01.azurewebsites.net/api/TrackViews?';
+// const functionApi = 'https://counter-api-atbphqayabhdhhew.centralindia-01.azurewebsites.net/api/TrackViews?';
 
 const getVisitCount = () => {
-    let count = 1;
-    fetch(functionApi).then(response => {
-        return response.json()
-    }).then(response => {
-        console.log("Website called fucntion API.");
-        count = response.count;
-        document.getElementById("counter").innerText = count;
-    }).catch(function(error){
-        console.log(error);
-    });
-    return count;
-}
+    fetch("https://counter-api-atbphqayabhdhhew.centralindia-01.azurewebsites.net/api/TrackViews?")
+        .then(response => response.json())
+        .then(response => {
+            console.log("Website called function API.");
+            const count = response.views;  // Make sure this matches your Function's return key
+            document.getElementById("counter").innerText = count;
+        })
+        .catch(function(error) {
+            console.error("Error calling Azure Function:", error);
+            document.getElementById("counter").innerText = "Error";
+        });
+};
+
+getVisitCount();
