@@ -28,22 +28,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Zip the function app
-        run: |
-          zip -r function.zip .
+      - name: Zip the Azure Function
+        run: zip -r function.zip .
 
       - name: Deploy to Azure Function App
         uses: azure/functions-action@v1
         with:
           app-name: counter-api
-          package: ./backend/function.zip
+          package: function.zip
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
           scm-do-build-during-deployment: true
-
-      - name: Set environment variables
-        env:
-          COSMOS_DB_URL: ${{ secrets.COSMOS_DB_URL }}
-          COSMOS_DB_KEY: ${{ secrets.COSMOS_DB_KEY }}
-          COSMOS_DB_NAME: ${{ secrets.COSMOS_DB_NAME }}
-          COSMOS_DB_CONTAINER: ${{ secrets.COSMOS_DB_CONTAINER }}
-        run: echo "Environment variables passed (used by app runtime)"
