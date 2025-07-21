@@ -12,10 +12,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./backend
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,10 +22,15 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
+        working-directory: ./backend
         run: pip install -r requirements.txt
 
       - name: Zip the Azure Function
-        run: zip -r function.zip .
+        working-directory: ./backend
+        run: zip -r ../function.zip .
+
+      - name: Confirm ZIP contents
+        run: unzip -l function.zip
 
       - name: Deploy to Azure Function App
         uses: azure/functions-action@v1
