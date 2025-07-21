@@ -1,0 +1,49 @@
+name: Deploy Azure Function (Backend)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Zip the function app
+        run: |
+          zip -r function.zip .
+
+      - name: Deploy to Azure Function App
+        uses: azure/functions-action@v1
+        with:
+          app-name: counter-api
+          package: ./backend/function.zip
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          scm-do-build-during-deployment: true
+
+      - name: Set environment variables
+        env:
+          COSMOS_DB_URL: ${{ secrets.COSMOS_DB_URL }}
+          COSMOS_DB_KEY: ${{ secrets.COSMOS_DB_KEY }}
+          COSMOS_DB_NAME: ${{ secrets.COSMOS_DB_NAME }}
+          COSMOS_DB_CONTAINER: ${{ secrets.COSMOS_DB_CONTAINER }}
+        run: echo "Environment variables passed (used by app runtime)"
