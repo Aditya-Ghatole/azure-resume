@@ -367,7 +367,6 @@ window.addEventListener('DOMContentLoaded', (event) =>{
     getVisitCount();
 })
 
-// const functionApi = 'https://counter-api-atbphqayabhdhhew.centralindia-01.azurewebsites.net/api/TrackViews?';
 
 const getVisitCount = () => {
     fetch("https://counter-api-atbphqayabhdhhew.centralindia-01.azurewebsites.net/api/TrackViews?")
@@ -382,5 +381,3 @@ const getVisitCount = () => {
             document.getElementById("counter").innerText = "Error";
         });
 };
-
-getVisitCount();
