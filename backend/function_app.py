@@ -1,3 +1,4 @@
+import azure
 import azure.functions as func
 import os
 import json
