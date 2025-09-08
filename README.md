@@ -13,9 +13,7 @@ High-level components:
 
     Backend: Python-based RESTful API implemented with Azure Functions
 
-    Database: Azure Table Storage for persisting visitor statistics
-
-    Authentication: Optional integration with Azure Active Directory or anonymous access
+    Database: Azure Cosmos DB for persisting visitor statistics
 
     Infrastructure as Code: Resource provisioning managed via ARM/Bicep or Terraform scripts
 
