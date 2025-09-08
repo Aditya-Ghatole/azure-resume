@@ -19,3 +19,10 @@ High-level components:
 
     CI/CD Pipeline: Automated build and deployment with GitHub Actions or Azure DevOps Pipelines
 
+
+## Credits
+
+This project’s front-end design is based on the **Luther template** by [Styleshout](https://www.styleshout.com/).  
+The template is licensed under the [Creative Commons Attribution 3.0 License](https://creativecommons.org/licenses/by/3.0/).
+
+The template has been customized and adapted for this project.
